@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  work_db:
+    container_name: work_db
+    image: library/postgres:13.2-alpine
+    environment:
+      POSTGRES_USER: ${WORKDB_USER}
+      POSTGRES_PASSWORD: ${WORKDB_PASSWORD}
+      POSTGRES_DB: ${WORKDB_DB}
+  flyway:
+    container_name: flyway
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://work_db/${WORKDB_DB} -schemas=${WORKDB_SCHEMA} -user=${WORKDB_USER} -password=${WORKDB_PASSWORD} -connectRetries=60 migrate
+    volumes:
+      - ${MIGRATION_DIRECTORY}:/flyway/sql
+    depends_on:
+      - work_db

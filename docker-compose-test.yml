@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  test_target_db:
+    container_name: test_target_db
+    image: library/postgres:13.2-alpine
+    environment:
+      POSTGRES_USER: ${TARGETDB_USER}
+      POSTGRES_PASSWORD: ${TARGETDB_PASSWORD}
+      POSTGRES_DB: ${TARGETDB_DB}
+  test_target_flyway:
+    container_name: test_target_flyway
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://test_target_db/${TARGETDB_DB} -schemas=${TARGETDB_SCHEMA} -user=${TARGETDB_USER} -password=${TARGETDB_PASSWORD} -connectRetries=60 migrate
+    volumes:
+      - ${TARGET_MIGRATION_DIRECTORY}:/flyway/sql
+    depends_on:
+      - test_target_db
