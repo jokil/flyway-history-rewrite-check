@@ -3,7 +3,7 @@
 set -e
 set -a
 
-source .env
+. .env
 
 # Source additional env files
 for env_file in "$@"; do
@@ -31,7 +31,7 @@ EOF
 }
 
 function table_query_for_schema() {
-  echo "SELECT CONCAT(tablename) FROM pg_tables WHERE schemaname='$1' AND tablename NOT LIKE 'flyway%' order by tablename;"
+  echo "SELECT tablename FROM pg_tables WHERE schemaname='$1' AND tablename NOT LIKE 'flyway%' order by tablename;"
 }
 
 function exec_work_db_query() {
@@ -107,3 +107,5 @@ get_tables_from_workdb
 get_tables_from_target
 compare_table_lists
 compare_tables
+# This will fail when test containers are up, because they use the same network.
+docker-compose down &>/dev/null || true

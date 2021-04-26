@@ -33,3 +33,4 @@ if ! ./check.sh .env.test; then
 fi
 
 echo "All tests passed!"
+docker-compose -f docker-compose-test.yml down &>/dev/null
